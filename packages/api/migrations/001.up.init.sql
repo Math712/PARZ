@@ -1,0 +1,23 @@
+CREATE DATABASE main;
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS cab_types
+(
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS trips
+(
+    has_dispute  BOOLEAN          NOT NULL,
+    started_at   TIMESTAMPTZ      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ended_at     TIMESTAMPTZ      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id           SERIAL           NOT NULL,
+    distance     DOUBLE PRECISION NOT NULL,
+    tip_amount   DOUBLE PRECISION NOT NULL,
+    total_amount DOUBLE PRECISION NOT NULL,
+    cab_type_id  SMALLINT         NOT NULL
+);
+
+COMMIT;

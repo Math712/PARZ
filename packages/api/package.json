@@ -1,0 +1,44 @@
+{
+  "name": "@test/api",
+  "description": "PARZ TEST",
+  "version": "0.0.0",
+  "private": true,
+  "author": {
+    "name": "PARZ",
+    "email": "contact@parz.co",
+    "url": "https://parz.co"
+  },
+  "packageManager": "yarn@4.0.1",
+  "engineStrict": true,
+  "engines": {
+    "node": "^20.10.0",
+    "yarn": "^4.0.1"
+  },
+  "scripts": {
+    "build:swc": "yarn swc src -d dist --copy-files -w -q --sync",
+    "build:tsc": "tsc -w --pretty --skipLibCheck --noEmit",
+    "build:prod": "yarn swc src -d dist --copy-files",
+    "podman:compose": "podman-compose --env-file .env -f containers/compose.yml",
+    "docker:compose": "docker compose --env-file .env -f containers/compose.yml",
+    "sh:sql": "yarn podman:compose exec sql /bin/sh",
+    "sh:sql:docker": "yarn docker:compose exec sql /bin/sh",
+    "build": "yarn podman:compose build --no-cache",
+    "build:docker": "yarn docker:compose build --no-cache",
+    "dev": "yarn build:tsc & yarn build:swc & yarn podman:compose up --force-recreate --abort-on-container-exit --remove-orphans",
+    "dev:docker": "yarn build:tsc & yarn build:swc & yarn docker:compose up --force-recreate --abort-on-container-exit --remove-orphans"
+  },
+  "dependencies": {
+    "@fastify/cors": "^8.5.0",
+    "fastify": "^4.23.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.3.12",
+    "@swc/core": "^1.5.28",
+    "@types/node": "^20.7.1",
+    "@types/pg": "^8.10.3",
+    "chokidar": "^3.5.3",
+    "prettier": "^3.1.1",
+    "typescript": "^5.2.2"
+  }
+}

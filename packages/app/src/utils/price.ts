@@ -1,0 +1,1 @@
+export const displayFormat = (price?: number) => price?.toLocaleString('en-US', {style: 'currency', currency: 'USD'})

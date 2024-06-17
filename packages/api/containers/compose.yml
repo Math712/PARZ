@@ -1,0 +1,63 @@
+version: "3.x"
+
+name: api-test
+
+services:
+  sql:
+    container_name: sql-api-test
+    restart: unless-stopped
+    image: docker.io/library/postgres:15.2-alpine
+    environment:
+      POSTGRES_USER: main
+      POSTGRES_PASSWORD: main
+      POSTGRES_DB: main
+      PGPORT: 5432
+    volumes:
+      - /var/lib/postgresql/data
+      - ../datasets:/datasets:Z
+      - ../migrations:/migrations:Z
+    networks:
+      - local
+    ports:
+      - "5432:5432"
+    mem_limit: 2048m
+    mem_reservation: 2048m
+    cpus: 4
+
+  default:
+    container_name: default-api-test
+    build:
+      context: ../
+      dockerfile: ./containers/dockerfile
+    read_only: true
+    image: default-api-test:latest
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - TZ=UTC
+
+      - SQL_CLUSTER_DEFAULT_HOST=sql-api-test
+      - SQL_CLUSTER_DEFAULT_PORT=5432
+      - SQL_CLUSTER_DEFAULT_USER=main
+      - SQL_CLUSTER_DEFAULT_PASSWORD=main
+      - SQL_CLUSTER_DEFAULT_DATABASES=main
+      - SQL_TLS_ENABLED=false
+    volumes:
+      - ../dist:/opt/app/dist:Z
+      - ../src:/opt/app/src:Z
+    networks:
+      - local
+    ports:
+      - "3000:3000"
+    depends_on:
+      - sql
+    mem_limit: 2048m
+    mem_reservation: 1024m
+    cpus: 2
+    user: "1000:1000"
+    userns_mode: "keep-id"
+
+networks:
+  local:
+    name: network-api-test
+    driver: bridge
